@@ -1,0 +1,108 @@
+function test
+img = rand(150,230,3);
+pr = [1:32];
+pc = [1:16];
+
+tic;
+imgF = getImageSqrFeatures(img);
+toc;
+
+imga = getImageSqrFeatures(img(pr,pc,:));
+% imgb = getImageSqrFeatures(img(pr+1,pc,:));
+tic;
+[a chk]= find_indecies(imgF,imga);
+toc;
+% [b chk]= find_indecies(imgF,imgb)
+
+ir = size(img,1);
+ic = size(img,2);
+
+pcl = length(pc);prl = length(pr);
+chans = size(img,3); nCs = chans - (1*(pcl<3 || prl <3));
+push = chans*(prl*pcl - prl - pcl)+nCs;
+numFtrs = length(imga);
+
+
+
+pat = pattern(a);
+
+total = (ir - length(pr)+1)*(ic - length(pc)+1);
+
+cnt = 0;
+idx = zeros(1,length(a));
+for i = 0:ir - length(pr)
+    idx(1:push) = a(1:push) + i*(ic-1);
+    idx(push+1:end)= a(push+1:end) + i*(ic-2);
+    parfor j = 0:ic - length(pc)
+        imgb = getImageSqrFeatures(img(pr+i,pc+j,:));
+        index = idx + j;
+        if  sum(imgF(index) == imgb) == numFtrs
+            cnt = cnt +1;
+            %            if sum(idx > length(imgF)), disp ('exceeded'); end;
+            %            fprintf('(%d,%d) correct\n',i,j);
+        end
+        
+    end
+end
+
+if cnt == total
+    disp('passed')
+end
+
+end
+
+function [idx chk] = find_indecies(a,b)
+idx = zeros(1,length(b));
+cnt = 0;
+
+for j = 1:length(b)
+    for i = 1:length(a)
+        if a(i) == b(j)
+            cnt = cnt +1;
+            idx(cnt) = i;
+            break;
+        end
+    end
+    if cnt == length(b),break;end;
+    
+end
+chk = false;
+if sum(a(idx) == b) == length(b)
+    chk = true;
+else
+    chk = false;
+end
+
+
+
+
+end
+
+function pat = pattern(a)
+
+
+for i = 1:length(a)-1
+    
+    pat(i) = a(i+1) - a(i);
+end
+
+end
+
+
+% a = (pc-2);
+% b = (ic-1)-(pc-2);
+% c = ir*(ic-1)-ic*(pr-1)-pc+pr+1;
+% bExt = (1*(pr-2 >0));
+% d = (ir-2)*(ic-2) - (pc-3);
+% testPat = [];
+% for p = 1:chans
+%     intPat = [];
+%     intPat = cat(2,intPat,repmat(1,[1 a]));
+%     if (bExt == 1), intPat = cat(2,intPat,b); end;
+%     testPat = cat(2,testPat,repmat(intPat,[1 (pr-2)]));
+%
+%     testPat = cat(2,testPat,repmat(1,[1 a]));
+%
+%     if p<= nCs,   testPat = cat(2,testPat,c);end;
+%
+% end

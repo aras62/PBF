@@ -1,0 +1,35 @@
+
+chns = rand (256,365,10);
+height = 256;
+width = 365;
+shrink = 2;
+modelHt = 64;
+modelWd = 32;
+
+stride = 4;
+
+pc = 1:(modelWd/shrink +1);
+pr = 1:(modelHt/shrink +1);
+
+% width1 =  ceil((width-modelWd/shrink+1)/stride)
+% height1 = ceil((height-modelHt/shrink+1)/stride)
+
+width1 =  ceil((width*s-modelWd/shrink+1)/stride)
+height1 = ceil((height-modelHt/shrink+1)/stride)
+
+for  c=1:width1-1 
+    for  r=1:height1-1
+%         r
+%         c
+%      pr+(r*stride/shrink)
+%      pc+(c*stride/shrink)
+        patch = chns(pr+(r*stride/shrink),pc+(c*stride/shrink),:);
+%         pFeatures = getImageSqrFeatures(patch);
+        
+        
+    end;
+end
+
+%   const int height1 = (int) ceil(float(height*shrink-modelHt+1)/stride);
+%   const int width1 = (int) ceil(float(width*shrink-modelWd+1)/stride);
+  
