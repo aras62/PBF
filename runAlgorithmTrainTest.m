@@ -38,7 +38,7 @@ dataInfo.valAnnotDir  = [dataInfo.dataDir 'val' annot_extension]; % Path to vali
  
 % Extract data from dataset folders
 [dataInfo.type, numTestImgs] = generateData(dataInfo);
-if dataInfo.justDataExtract, return; end;
+if dataInfo.justDataExtract, results = []; return; end;
 
 % Checks if the range of test images is valid
 if modelSetup.trOrDet > 0
